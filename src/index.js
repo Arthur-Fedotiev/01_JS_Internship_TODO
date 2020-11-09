@@ -1,31 +1,29 @@
 import tasks, { dateCreator } from "./tasks.js";
 import { ReduceStore } from "./flux/ReduceStore.js";
 
-//------------------ ACTION CREATORS
+//------------------ ACTION CONSTANTS
 
 const ADD_NEW_TASK = "ADD_NEW_TASK";
+const HANDLE_ERROR = "HANDLE_ERROR";
+const SHOW_MODAL = "SHOW_MODAL";
+
+//------------------ ACTION CREATORS
 const newTask = (value) => ({
   type: ADD_NEW_TASK,
   payload: value,
 });
-const HANDLE_ERROR = "HANDLE_ERROR";
+
 const handleError = (value) => ({
   type: HANDLE_ERROR,
   payload: value,
 });
 
-const HANDLE_CHANGE = "HANDLE_CHANGE";
-const handleChange = (value) => ({
-  type: HANDLE_CHANGE,
-  payload: value,
-});
-
-const SHOW_MODAL = "SHOW_MODAL";
 const handleModal = (value) => ({
   type: SHOW_MODAL,
   payload: value,
 });
-//------------------ REDUX STORE
+
+//------------------ STORE (contains State of App)
 
 class ToDoStore extends ReduceStore {
   setInitialState() {
@@ -55,11 +53,6 @@ class ToDoStore extends ReduceStore {
           ...state,
           err: payload,
         };
-      case HANDLE_CHANGE:
-        return {
-          ...state,
-          formInput: payload,
-        };
       case SHOW_MODAL:
         return {
           ...state,
@@ -72,9 +65,10 @@ class ToDoStore extends ReduceStore {
   }
 }
 
-const toDoStore = new ToDoStore();
+const toDoStore = new ToDoStore(); // STORE for TODO CREATED
+
+//--------- INPUT Validation
 const validate = (data) => {
-  console.log(data);
   const err = {};
   if (data.value.match(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi))
     err[data.name] = "Task must not include special characters!";
@@ -83,14 +77,13 @@ const validate = (data) => {
   return err;
 };
 
-//------------
+//------------ EVENT HANDLERS
 const handleEvent = (e) => {
   const { target, type } = e;
 
   switch (type) {
     case "submit":
       e.preventDefault();
-
       if (target.name === "newTask") {
         let err = validate({
           name: "newTaskName",
@@ -101,7 +94,6 @@ const handleEvent = (e) => {
           toDoStore.dispatch(handleError({}));
           toDoStore.dispatch(newTask(target.newTaskName.value));
           target.newTaskName.value = "";
-          return null;
         }
       }
       if (target.name === "modalForm") {
@@ -119,21 +111,20 @@ const handleEvent = (e) => {
               expirationDate: target.expirationDateModal.value,
             })
           );
-          return toDoStore.dispatch(handleModal(false));
+          toDoStore.dispatch(handleModal(false));
         }
       }
+      break;
 
-      break;
-    case "change":
-      if (target.name !== "newTaskName") return;
-      //toDoStore.dispatch(handleError(""));
-      break;
     case "click":
-      console.log(target);
       if (target.id === "createTaskBtn") toDoStore.dispatch(handleModal(true));
+      if (target.id === "hideModalBtn") {
+        toDoStore.dispatch(handleError({}));
+        toDoStore.dispatch(handleModal(false));
+      }
       break;
     default:
-      throw Erroe("No such a case");
+      throw Error("No such a case");
   }
 };
 document.addEventListener("submit", handleEvent);
@@ -144,7 +135,6 @@ document.addEventListener("click", handleEvent);
 const tasksSection = document.getElementById("tasks");
 const inputForm = document.getElementById("inputForm");
 const errorMessage = document.getElementById("errorMessage");
-const createTaskBtn = document.getElementById("createTaskBtn");
 const modalWindow = document.getElementById("modalWindow");
 
 const render = (state) => {
@@ -166,31 +156,37 @@ const render = (state) => {
     </form>`;
   errorMessage.innerHTML = state.err["newTaskName"]
     ? `<div class="alert alert-warning" role="alert">${state.err["newTaskName"]}</div>`
-    : null;
+    : "";
   modalWindow.style.display = state.showModal ? "block" : "none";
   modalWindow.innerHTML = `<div class="modal-content">
   <form name="modalForm">
     <label for="newTaskModal">New task</label><br />
-    <input type="text" id="newTaskModal" name="newTaskModal" class="${
-      state.err["newTaskModal"] ? "alert alert-warning" : ""
-    }" /><br />
-    <blockquote role="alert" id="errorMessage">
+    <input type="text" 
+    id="newTaskModal"
+    name="newTaskModal"
+    class="${state.err["newTaskModal"] ? "alert alert-warning" : ""}"  
+    placeholder="Add a new task"/><br />
+
+  <blockquote role="alert" id="errorMessage">
     ${
-      state.err["newTaskModal"] &&
-      `<div class="alert alert-warning" role="alert">${state.err["newTaskModal"]}</div>`
+      state.err["newTaskModal"]
+        ? `<div class="alert alert-warning" role="alert">${state.err["newTaskModal"]}</div>`
+        : ""
     }
     </blockquote>
     <label for="creationDateModal">Creation date of the task</label><br />
-    <input type="date" id="creationDateModal" name="creationDateModal" /><br /><br />
+    <input type="date" id="creationDateModal" name="creationDateModal" required/><br /><br />
     <label for="expirationDateModal">Expiration date of the task</label><br>
-    <input type="date" id="expirationDateModal" name="expirationDateModal" /><br /><br />  
-    <button type="submit" id="submitModalBtn" class="btn btn-primary mb-2">Create task</button>
-    <button type="button" id="cancelModalBtn" class="btn btn-primary mb-2">Cancel</button>
+    <input type="date" id="expirationDateModal" name="expirationDateModal" required/><br /><br />  
+    <button type="submit" id="submitModalBtn" class="btn btn-primary mb-2">Save</button>
+    <button type="button" id="hideModalBtn" class="btn btn-primary mb-2">Cancel</button>
   </form>
 </div>`;
 };
 
+// --------------- CALLING & REGISTRING of RENDER
 render(toDoStore.setInitialState());
 toDoStore.register(render);
 
+//---------------- Just handy (must be deleted later)
 window.toDoStore = toDoStore;
