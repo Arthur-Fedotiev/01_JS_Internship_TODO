@@ -6,6 +6,7 @@ import { ReduceStore } from "./flux/ReduceStore.js";
 const ADD_NEW_TASK = "ADD_NEW_TASK";
 const HANDLE_ERROR = "HANDLE_ERROR";
 const SHOW_MODAL = "SHOW_MODAL";
+const CHANGE_COMPLETED = "CHANGE_COMPLETED";
 
 //------------------ ACTION CREATORS
 const newTask = (value) => ({
@@ -23,6 +24,11 @@ const handleModal = (value) => ({
   payload: value,
 });
 
+const handleCheck = (id) => ({
+  type: CHANGE_COMPLETED,
+  payload: id,
+});
+
 //------------------ STORE (contains State of App)
 
 class ToDoStore extends ReduceStore {
@@ -30,6 +36,7 @@ class ToDoStore extends ReduceStore {
     return { tasks, err: {}, formInput: "", showModal: false };
   }
   reduce(state, action) {
+    console.log(action);
     const { type, payload } = action;
     switch (type) {
       case ADD_NEW_TASK:
@@ -58,7 +65,13 @@ class ToDoStore extends ReduceStore {
           ...state,
           showModal: payload,
         };
-
+      case CHANGE_COMPLETED:
+        return {
+          ...state,
+          tasks: state.tasks.map((t) =>
+            t.id === payload ? { ...t, completed: !t.completed } : t
+          ),
+        };
       default:
         throw Error("No such a case");
     }
@@ -123,12 +136,17 @@ const handleEvent = (e) => {
         toDoStore.dispatch(handleModal(false));
       }
       break;
+
+    case "input":
+      if (target.name === "task") toDoStore.dispatch(handleCheck(+target.id));
+      break;
     default:
       throw Error("No such a case");
   }
 };
 document.addEventListener("submit", handleEvent);
 document.addEventListener("click", handleEvent);
+document.addEventListener("input", handleEvent);
 
 //----------------VIEWS
 
@@ -138,9 +156,18 @@ const errorMessage = document.getElementById("errorMessage");
 const modalWindow = document.getElementById("modalWindow");
 
 const render = (state) => {
-  tasksSection.innerHTML = `<ul class="list-group">${state.tasks
-    .map((t) => `<li class="list-group-item">${t.content}</li>`)
-    .join("")}</ul>`;
+  tasksSection.innerHTML = `<div class="form-check">${state.tasks
+    .map(
+      (t) => `
+      <input class="form-check-input my-3" type="checkbox" name="task" id=${
+        t.id
+      } ${t.completed ? "checked" : ""} ">
+      
+    <label class="form-check-label my-2 ${t.completed && "text-muted"}" for=${
+        t.id
+      }> ${t.completed ? `<del>${t.content}</del>` : t.content}</label><br>`
+    )
+    .join("")}</div>`;
   inputForm.innerHTML = `<form class="form-inline my-3" name="newTask">
   <div class="form-group mx-0 mb-2">
   <label for="newTaskName" class="sr-only">Add new task</label>
@@ -149,7 +176,6 @@ const render = (state) => {
         state.err["newTaskName"] ? "alert alert-warning" : ""
       }"
       name="newTaskName"
-      value="${state.formInput}"
       placeholder="Add a new task"/>
       </div>
 <button type="button" id="createTaskBtn" class="btn btn-primary mb-2">+</button>
