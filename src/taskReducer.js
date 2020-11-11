@@ -1,9 +1,7 @@
 import C from "./constants.js";
 import tasks, { dateCreator } from "./tasks.js";
 
-const initialState = tasks;
-
-export default (state = initialState, action) => {
+export default (state, action) => {
   const { type, payload } = action;
   switch (type) {
     case C.ADD_NEW_TASK:
@@ -51,6 +49,7 @@ export default (state = initialState, action) => {
           : state.tasks.filter((t) => !t.completed),
       };
     case C.EDIT_TASK:
+      console.log(payload);
       if (payload) {
         const idx = state.tasks.findIndex((t) => t.id == payload);
         const taskToEdit = state.tasks[idx];
