@@ -6,4 +6,6 @@ export default {
   SHOW_MODAL: "SHOW_MODAL",
   CHANGE_COMPLETED: "CHANGE_COMPLETED",
   FILTER_TASKS: "FILTER_TASKS",
+  CREATE_TASK_BTN: "createTaskBtn",
+  HIDE_MODAL_BTN: "hideModalBtn",
 };

@@ -7,8 +7,8 @@ export default class FilterButtonsList {
 
   buttonsToHTML() {
     return this.labels.map(
-      (l, idx) =>
-        `<button type="button" data-filter=${this.dataFilters[idx]} class="btn btn-primary">${l}</button>`
+      (label, index) =>
+        `<button type="button" data-filter=${this.dataFilters[index]} class="btn btn-primary">${label}</button>`
     );
   }
 

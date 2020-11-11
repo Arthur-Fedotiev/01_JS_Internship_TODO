@@ -1,58 +1,71 @@
-import C from "./constants.js";
-import tasks, { dateCreator } from "./tasks.js";
+import CONSTANTS from "./constants.js";
+import { dateCreator } from "./tasks.js";
+import id from "./utils/generateID.js";
+
+//----------HELPERS
+const createTask = (state, { payload }) => {
+  return [
+    ...state.tasks,
+    {
+      id: id(),
+      content: payload.content ? payload.content : payload,
+      completed: false,
+      creationDate: payload.creationDate
+        ? dateCreator(payload.creationDate).created
+        : dateCreator().created,
+      expirationDate: dateCreator().expired,
+    },
+  ];
+};
+
+const editTask = (state, { payload }) => {
+  return state.tasks.map((task) =>
+    task.id === state.taskToEdit.id ? { ...task, ...payload } : task
+  );
+};
 
 export default (state, action) => {
   const { type, payload } = action;
+
   switch (type) {
-    case C.ADD_NEW_TASK:
+    case CONSTANTS.ADD_NEW_TASK:
+      const isTasktoEdit = !!state.taskToEdit.id;
+
       return {
         ...state,
-        tasks: state.taskToEdit.id
-          ? tasks.map((t) =>
-              t.id === state.taskToEdit.id ? { ...t, ...payload } : t
-            )
-          : [
-              ...state.tasks,
-              {
-                id: state.tasks.length + 1,
-                content: payload.content ? payload.content : payload,
-                completed: false,
-                creationDate: payload.creationDate
-                  ? dateCreator(payload.creationDate).created
-                  : dateCreator().created,
-                expirationDate: dateCreator().expired,
-              },
-            ],
+        tasks: isTasktoEdit
+          ? editTask(state, action)
+          : createTask(state, action),
       };
-    case C.HANDLE_ERROR:
+    case CONSTANTS.HANDLE_ERROR:
       return {
         ...state,
         err: payload,
       };
-    case C.SHOW_MODAL:
+    case CONSTANTS.SHOW_MODAL:
       return {
         ...state,
         showModal: payload,
       };
-    case C.CHANGE_COMPLETED:
+    case CONSTANTS.CHANGE_COMPLETED:
       return {
         ...state,
-        tasks: state.tasks.map((t) =>
-          t.id === payload ? { ...t, completed: !t.completed } : t
+        tasks: state.tasks.map((task) =>
+          task.id === payload ? { ...task, completed: !task.completed } : task
         ),
       };
-    case C.DELETE_TASK:
+    case CONSTANTS.DELETE_TASK:
       return {
         ...state,
         tasks: payload
-          ? state.tasks.filter((t) => t.id !== payload)
-          : state.tasks.filter((t) => !t.completed),
+          ? state.tasks.filter((task) => task.id !== payload)
+          : state.tasks.filter((task) => !task.completed),
       };
-    case C.EDIT_TASK:
-      console.log(payload);
+    case CONSTANTS.EDIT_TASK:
       if (payload) {
-        const idx = state.tasks.findIndex((t) => t.id == payload);
-        const taskToEdit = state.tasks[idx];
+        const index = state.tasks.findIndex((task) => task.id == payload);
+        const taskToEdit = state.tasks[index];
+
         return {
           ...state,
           taskToEdit: taskToEdit,
@@ -63,7 +76,7 @@ export default (state, action) => {
           taskToEdit: {},
         };
       }
-    case C.FILTER_TASKS:
+    case CONSTANTS.FILTER_TASKS:
       return { ...state, showTasks: payload };
 
     default:

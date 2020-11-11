@@ -1,4 +1,4 @@
-import tasks, { dateCreator, filters, dataFilters } from "./tasks.js";
+import tasks, { filters, dataFilters } from "./tasks.js";
 import { ReduceStore } from "./flux/ReduceStore.js";
 import ModalForm from "../components/ModalForm.js";
 import TasksList from "../components/TasksList.js";
@@ -6,6 +6,7 @@ import ErrorMessage from "../components/ErrorMessage.js";
 import InputForm from "../components/InputForm.js";
 import FilterButtonsList from "../components/FilterButtonsList.js";
 import taskReducer from "./taskReducer.js";
+import CONSTANTS from "./constants.js";
 import {
   newTask,
   handleError,
@@ -76,8 +77,9 @@ const handleEvent = (e) => {
       break;
 
     case "click":
-      if (target.id === "createTaskBtn") toDoStore.dispatch(handleModal(true));
-      if (target.id === "hideModalBtn") {
+      if (target.id === CONSTANTS.CREATE_TASK_BTN)
+        toDoStore.dispatch(handleModal(true));
+      if (target.id === CONSTANTS.HIDE_MODAL_BTN) {
         toDoStore.dispatch(handleError({}));
         toDoStore.dispatch(handleModal(false));
         toDoStore.dispatch(handleEdit(null));
