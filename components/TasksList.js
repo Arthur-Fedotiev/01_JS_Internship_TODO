@@ -1,17 +1,20 @@
 export default class TasksList {
   constructor(container) {
     this.container = container;
+    this.tasksToShow = [];
   }
 
-  render(tasks, showTasks) {
-    console.log(showTasks);
-    const tasksToShow =
-      showTasks === "all"
-        ? tasks
-        : tasks.filter((t) => {
-            return showTasks === "completed" ? t.completed : !t.completed;
+  getFilteredItems(filter, items) {
+    this.tasksToShow =
+      filter === "all"
+        ? items
+        : items.filter((i) => {
+            return filter === "completed" ? i.completed : !i.completed;
           });
-    this.container.innerHTML = `<div class="form-check">${tasksToShow
+  }
+
+  tasksToHTML(tasksToShow) {
+    return `<div class="form-check">${tasksToShow
       .map(
         (t) => `<div class="row">
           <div class="col-3">
@@ -36,5 +39,10 @@ export default class TasksList {
           </div>`
       )
       .join("")}</div>`;
+  }
+
+  render(tasks, showTasks) {
+    this.getFilteredItems(showTasks, tasks);
+    this.container.innerHTML = this.tasksToHTML(this.tasksToShow);
   }
 }

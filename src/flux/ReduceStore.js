@@ -21,13 +21,13 @@ export class ReduceStore {
     return this.state;
   }
 
-  reduce(state, action) {
+  reduce() {
     throw Error("Must be overridden in subclasses");
   }
 
   dispatch(action) {
-    console.log("I am called");
     const newState = this.reduce(this.state, action);
+
     if (newState !== this.state) {
       this.state = newState;
       this.emitChange();

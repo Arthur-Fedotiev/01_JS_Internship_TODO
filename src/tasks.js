@@ -15,6 +15,9 @@ export const dateCreator = (...args) => {
   return { created, expired };
 };
 
+export const filters = ["ALL", "ACTIVE", "COMPLETED", "CLEAR COMPLETED"];
+export const dataFilters = ["all", "active", "completed", "clearCompleted"];
+
 const tasks = [
   {
     id: 1,
