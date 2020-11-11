@@ -105,14 +105,15 @@ class ToDoStore extends ReduceStore {
           ),
         };
       case DELETE_TASK:
+        console.log(action);
         return {
           ...state,
           tasks: payload
-            ? state.tasks.filter((t) => t.id === payload)
+            ? state.tasks.filter((t) => t.id !== payload)
             : state.tasks.filter((t) => !t.completed),
         };
       case EDIT_TASK:
-        if (!null) {
+        if (payload) {
           const idx = state.tasks.findIndex((t) => t.id == payload);
           const taskToEdit = state.tasks[idx];
           return {
@@ -172,6 +173,7 @@ const handleEvent = (e) => {
           value: target.newTaskModal.value,
         });
         toDoStore.dispatch(handleError(err));
+
         if (!err["newTaskModal"]) {
           toDoStore.dispatch(handleError({}));
           toDoStore.dispatch(
@@ -193,6 +195,7 @@ const handleEvent = (e) => {
       if (target.id === "hideModalBtn") {
         toDoStore.dispatch(handleError({}));
         toDoStore.dispatch(handleModal(false));
+        toDoStore.dispatch(handleEdit(null));
       }
       if (target.name === "deleteBtn") {
         toDoStore.dispatch(handleDelete(+target.id));

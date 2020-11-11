@@ -2,17 +2,20 @@ export default class ModalForm {
   constructor(container) {
     this.container = container;
   }
-  formatDate(task) {
-    let created = task.creationDate.slice(0, 10).split("/");
-    created = [created.pop(), ...created].join("-");
-    let expired = task.expirationDate.slice(0, 10).split("/");
-    expired = [expired.pop(), ...expired].join("-");
-    return { created, expired };
+
+  formatDate(invalidaDatesArray) {
+    const dates = invalidaDatesArray.map((d) => {
+      const date = d.slice(0, 10).split("/");
+      return [date.pop(), ...date].join("-");
+    });
+    return dates;
   }
+
   render(task = {}, err, showModal) {
-    if (task.id) {
-      var { created, expired } = this.formatDate(task);
-    }
+    const [created, expired] = task.id
+      ? this.formatDate([task.creationDate, task.expirationDate])
+      : "";
+
     this.container.innerHTML = `<div class="modal-content">
           <form name="modalForm">
             <label for="newTaskModal">Task</label><br />
