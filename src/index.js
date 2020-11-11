@@ -1,4 +1,4 @@
-import tasks, { dateCreator, filters, dataFilters } from "./tasks.js";
+import tasks, { filters, dataFilters } from "./tasks.js";
 import { ReduceStore } from "./flux/ReduceStore.js";
 import ModalForm from "../components/ModalForm.js";
 import TasksList from "../components/TasksList.js";
@@ -6,6 +6,7 @@ import ErrorMessage from "../components/ErrorMessage.js";
 import InputForm from "../components/InputForm.js";
 import FilterButtonsList from "../components/FilterButtonsList.js";
 import taskReducer from "./taskReducer.js";
+import CONSTANTS from "./constants.js";
 import {
   newTask,
   handleError,
@@ -14,6 +15,7 @@ import {
   handleDelete,
   handleEdit,
   handleFilter,
+  handleSorting,
 } from "./AC/index.js";
 import validate from "./utils/validate.js";
 
@@ -27,6 +29,7 @@ class ToDoStore extends ReduceStore {
       taskToEdit: {},
       showModal: false,
       showTasks: "all",
+      sortBy: "",
     };
   }
   reduce = (state, action) => taskReducer(state, action);
@@ -76,8 +79,9 @@ const handleEvent = (e) => {
       break;
 
     case "click":
-      if (target.id === "createTaskBtn") toDoStore.dispatch(handleModal(true));
-      if (target.id === "hideModalBtn") {
+      if (target.id === CONSTANTS.CREATE_TASK_BTN)
+        toDoStore.dispatch(handleModal(true));
+      if (target.id === CONSTANTS.HIDE_MODAL_BTN) {
         toDoStore.dispatch(handleError({}));
         toDoStore.dispatch(handleModal(false));
         toDoStore.dispatch(handleEdit(null));
@@ -93,6 +97,9 @@ const handleEvent = (e) => {
         target.dataset.filter === "clearCompleted"
           ? toDoStore.dispatch(handleDelete(null))
           : toDoStore.dispatch(handleFilter(target.dataset.filter));
+      }
+      if (target.parentNode.id === "sortingButtons") {
+        toDoStore.dispatch(handleSorting(target.dataset.sorting));
       }
       break;
     case "input":
@@ -117,10 +124,10 @@ const filterButtonsList = new FilterButtonsList(
   dataFilters
 );
 
-const render = ({ tasks, showModal, err, taskToEdit, showTasks }) => {
+const render = ({ tasks, showModal, err, taskToEdit, showTasks, sortBy }) => {
   filterButtonsList.render();
-  tasksList.render(tasks, showTasks);
-  inputForm.render(err);
+  tasksList.render(tasks, showTasks, sortBy);
+  inputForm.render(err, sortBy);
   errorMessage.render(err);
   modalForm.render(taskToEdit, err, showModal);
 };

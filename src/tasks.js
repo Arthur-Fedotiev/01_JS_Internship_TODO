@@ -1,3 +1,5 @@
+import id from "./utils/generateID.js";
+
 export const dateCreator = (...args) => {
   const [creationDate, expirationDate] = args;
 
@@ -20,21 +22,21 @@ export const dataFilters = ["all", "active", "completed", "clearCompleted"];
 
 const tasks = [
   {
-    id: 1,
+    id: id(),
     content: "Go to movies",
     completed: false,
     creationDate: dateCreator().created,
     expirationDate: dateCreator().expired,
   },
   {
-    id: 2,
+    id: id(),
     content: "Go to the theter",
     completed: false,
     creationDate: dateCreator().created,
     expirationDate: dateCreator().expired,
   },
   {
-    id: 3,
+    id: id(),
     content: "Learn javaScript",
     completed: true,
     creationDate: dateCreator().created,

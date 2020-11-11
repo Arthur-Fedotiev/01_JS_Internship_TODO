@@ -1,36 +1,41 @@
-import C from "../constants.js";
+import CONSTANTS from "../constants.js";
 
 export const newTask = (value) => ({
-  type: C.ADD_NEW_TASK,
+  type: CONSTANTS.ADD_NEW_TASK,
   payload: value,
 });
 
 export const handleError = (value) => ({
-  type: C.HANDLE_ERROR,
+  type: CONSTANTS.HANDLE_ERROR,
   payload: value,
 });
 
 export const handleModal = (value) => ({
-  type: C.SHOW_MODAL,
+  type: CONSTANTS.SHOW_MODAL,
   payload: value,
 });
 
 export const handleCheck = (id) => ({
-  type: C.CHANGE_COMPLETED,
+  type: CONSTANTS.CHANGE_COMPLETED,
   payload: id,
 });
 
 export const handleDelete = (id) => ({
-  type: C.DELETE_TASK,
+  type: CONSTANTS.DELETE_TASK,
   payload: id,
 });
 
 export const handleEdit = (id) => ({
-  type: C.EDIT_TASK,
+  type: CONSTANTS.EDIT_TASK,
   payload: id,
 });
 
 export const handleFilter = (filter) => ({
-  type: C.FILTER_TASKS,
+  type: CONSTANTS.FILTER_TASKS,
   payload: filter,
+});
+
+export const handleSorting = (criteria) => ({
+  type: CONSTANTS.SORT_TASKS,
+  payload: criteria,
 });
