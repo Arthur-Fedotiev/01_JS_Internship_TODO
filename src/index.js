@@ -116,7 +116,6 @@ document.addEventListener("input", handleEvent);
 //----------------VIEWS
 const modalForm = new ModalForm(document.getElementById("modalWindow"));
 const tasksList = new TasksList(document.getElementById("tasks"));
-const errorMessage = new ErrorMessage(document.getElementById("errorMessage"));
 const inputForm = new InputForm(document.getElementById("inputForm"));
 const filterButtonsList = new FilterButtonsList(
   document.getElementById("filters"),
@@ -124,11 +123,10 @@ const filterButtonsList = new FilterButtonsList(
   dataFilters
 );
 
-const render = ({ tasks, showModal, err, taskToEdit, showTasks, sortBy }) => {
+const render = ({ tasks, showModal, err, taskToEdit, showTasks }) => {
   filterButtonsList.render();
-  tasksList.render(tasks, showTasks, sortBy);
-  inputForm.render(err, sortBy);
-  errorMessage.render(err);
+  tasksList.render(tasks, showTasks);
+  inputForm.render(err);
   modalForm.render(taskToEdit, err, showModal);
 };
 

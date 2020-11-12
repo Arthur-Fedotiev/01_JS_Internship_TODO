@@ -1,3 +1,5 @@
+import ErrorMessage from "./ErrorMessage.js";
+
 export default class InputForm {
   constructor(container) {
     this.container = container;
@@ -31,6 +33,7 @@ export default class InputForm {
         placeholder="Add a new task"/>
         </div>
   <button type="button" id="createTaskBtn" class="btn btn-primary mb-2">+</button>
-      </form>`;
+       </form>      
+       ${isError ? ErrorMessage.render(err["newTaskName"]) : ""}`;
   }
 }
