@@ -64,8 +64,9 @@ export default class TasksList {
       .join("")}</div>`;
   }
 
-  render(tasks, showTasks) {
-    this.getFilteredItems(showTasks, tasks);
+  render(tasks, showTasks, sortBy) {
+    const sortedTasks = this.sortTasks(tasks, sortBy);
+    this.getFilteredItems(showTasks, sortedTasks);
     this.container.innerHTML = this.tasksToHTML(this.tasksToShow);
   }
 }

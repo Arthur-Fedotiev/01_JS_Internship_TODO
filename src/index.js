@@ -98,7 +98,7 @@ const handleEvent = (e) => {
           ? toDoStore.dispatch(handleDelete(null))
           : toDoStore.dispatch(handleFilter(target.dataset.filter));
       }
-      if (target.parentNode.id === "sortingButtons") {
+      if (target.parentNode && target.parentNode.id === "sortingButtons") {
         toDoStore.dispatch(handleSorting(target.dataset.sorting));
       }
       break;
@@ -123,9 +123,9 @@ const filterButtonsList = new FilterButtonsList(
   dataFilters
 );
 
-const render = ({ tasks, showModal, err, taskToEdit, showTasks }) => {
+const render = ({ tasks, showModal, err, taskToEdit, showTasks, sortBy }) => {
   filterButtonsList.render();
-  tasksList.render(tasks, showTasks);
+  tasksList.render(tasks, showTasks, sortBy);
   inputForm.render(err);
   modalForm.render(taskToEdit, err, showModal);
 };

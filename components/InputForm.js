@@ -5,6 +5,8 @@ export default class InputForm {
     this.container = container;
   }
   render(err, sortBy) {
+    const isError = !!err["newTaskName"];
+
     const sortBtnLabel = !sortBy
       ? "Sort by "
       : sortBy === "content"
@@ -26,9 +28,7 @@ export default class InputForm {
 
     <label for="newTaskName" class="sr-only">Add new task</label>
     <input  type="text"
-        class="my-0 form-control ${
-          err["newTaskName"] ? "alert alert-warning" : ""
-        }"
+        class="my-0 form-control ${isError ? "alert alert-warning" : ""}"
         name="newTaskName"
         placeholder="Add a new task"/>
         </div>
