@@ -1,7 +1,19 @@
+import { dateSorter, stringSorter } from "../src/utils/sorter.js";
+
 export default class TasksList {
   constructor(container) {
     this.container = container;
     this.tasksToShow = [];
+  }
+
+  sortTasks(tasks, criteria) {
+    const isSortRequired = !!criteria;
+
+    if (isSortRequired) {
+      return criteria === "content"
+        ? stringSorter(tasks)
+        : dateSorter(tasks, "creationDate");
+    } else return tasks;
   }
 
   getFilteredItems(filter, items) {
@@ -52,8 +64,9 @@ export default class TasksList {
       .join("")}</div>`;
   }
 
-  render(tasks, showTasks) {
-    this.getFilteredItems(showTasks, tasks);
+  render(tasks, showTasks, sortBy) {
+    const sortedTasks = this.sortTasks(tasks, sortBy);
+    this.getFilteredItems(showTasks, sortedTasks);
     this.container.innerHTML = this.tasksToHTML(this.tasksToShow);
   }
 }

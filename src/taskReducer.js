@@ -79,6 +79,12 @@ export default (state, action) => {
     case CONSTANTS.FILTER_TASKS:
       return { ...state, showTasks: payload };
 
+    case CONSTANTS.SORT_TASKS:
+      return { ...state, sortBy: payload };
+
+    case CONSTANTS.INPUT_FILTER_TASKS:
+      console.log(payload);
+      return;
     default:
       return state;
   }

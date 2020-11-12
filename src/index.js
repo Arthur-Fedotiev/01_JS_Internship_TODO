@@ -15,6 +15,8 @@ import {
   handleDelete,
   handleEdit,
   handleFilter,
+  handleSorting,
+  handleInputFilter,
 } from "./AC/index.js";
 import validate from "./utils/validate.js";
 
@@ -28,6 +30,8 @@ class ToDoStore extends ReduceStore {
       taskToEdit: {},
       showModal: false,
       showTasks: "all",
+      sortBy: "",
+      filterInput: "",
     };
   }
   reduce = (state, action) => taskReducer(state, action);
@@ -41,6 +45,7 @@ const handleEvent = (e) => {
   switch (type) {
     case "submit":
       e.preventDefault();
+      console.log("Submit");
       if (target.name === "newTask") {
         let err = validate({
           name: "newTaskName",
@@ -96,9 +101,15 @@ const handleEvent = (e) => {
           ? toDoStore.dispatch(handleDelete(null))
           : toDoStore.dispatch(handleFilter(target.dataset.filter));
       }
+      if (target.parentNode && target.parentNode.id === "sortingButtons") {
+        toDoStore.dispatch(handleSorting(target.dataset.sorting));
+      }
       break;
     case "input":
+      console.log(target.value);
       if (target.name === "task") toDoStore.dispatch(handleCheck(+target.id));
+      if (target.name === "filterTasks")
+        toDoStore.dispatch(handleInputFilter(target.value));
       break;
     default:
       throw Error("No such a case");
@@ -118,10 +129,18 @@ const filterButtonsList = new FilterButtonsList(
   dataFilters
 );
 
-const render = ({ tasks, showModal, err, taskToEdit, showTasks }) => {
+const render = ({
+  tasks,
+  showModal,
+  err,
+  taskToEdit,
+  showTasks,
+  sortBy,
+  filterInput,
+}) => {
   filterButtonsList.render();
-  tasksList.render(tasks, showTasks);
-  inputForm.render(err);
+  tasksList.render(tasks, showTasks, sortBy);
+  inputForm.render(err, sortBy, filterInput);
   modalForm.render(taskToEdit, err, showModal);
 };
 
