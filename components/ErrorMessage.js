@@ -1,10 +1,8 @@
-export default class ErrorMessage {
-  constructor(container) {
-    this.container = container;
-  }
-  render(err) {
-    this.container.innerHTML = err["newTaskName"]
-      ? `<div class="alert alert-warning" role="alert">${err["newTaskName"]}</div>`
-      : "";
+class ErrorMessage {
+  render(message) {
+    return `<blockquote role="alert"><div class="alert alert-warning">${message}</div>
+      </blockquote>`;
   }
 }
+const errorMessage = new ErrorMessage();
+export default errorMessage;

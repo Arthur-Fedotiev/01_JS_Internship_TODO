@@ -1,13 +1,13 @@
 import CONSTANTS from "./constants.js";
 import { dateCreator } from "./tasks.js";
-import id from "./utils/generateID.js";
+import getId from "./utils/getId.js";
 
 //----------HELPERS
 const createTask = (state, { payload }) => {
   return [
     ...state.tasks,
     {
-      id: id(),
+      id: getId(),
       content: payload.content ? payload.content : payload,
       completed: false,
       creationDate: payload.creationDate

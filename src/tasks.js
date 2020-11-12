@@ -1,4 +1,4 @@
-import id from "./utils/generateID.js";
+import getId from "./utils/getId.js";
 
 export const dateCreator = (...args) => {
   const [creationDate, expirationDate] = args;
@@ -22,21 +22,21 @@ export const dataFilters = ["all", "active", "completed", "clearCompleted"];
 
 const tasks = [
   {
-    id: id(),
+    id: getId(),
     content: "Go to movies",
     completed: false,
     creationDate: dateCreator().created,
     expirationDate: dateCreator().expired,
   },
   {
-    id: id(),
+    id: getId(),
     content: "Go to the theter",
     completed: false,
     creationDate: dateCreator().created,
     expirationDate: dateCreator().expired,
   },
   {
-    id: id(),
+    id: getId(),
     content: "Learn javaScript",
     completed: true,
     creationDate: dateCreator().created,
