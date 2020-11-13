@@ -7,15 +7,11 @@ export const dateCreator = (...args) => {
   let expired = expirationDate
     ? new Date(expirationDate).toLocaleString()
     : new Date(created);
-  console.log("create \n", created, "\n expired \n", expired);
   if (!expirationDate) {
-    console.log("line14");
-    console.log(created, expired);
     expired.setDate(expired.getDate() + 1);
     expired = expired.toLocaleString();
   }
   created = created.toLocaleString();
-  console.log(created, expired);
   return { created, expired };
 };
 

@@ -49,7 +49,7 @@ const handleEvent = (e) => {
   switch (type) {
     case "submit":
       e.preventDefault();
-      console.log("Submit");
+
       if (target.name === "newTask") {
         let err = validate({
           name: "newTaskName",
@@ -62,6 +62,11 @@ const handleEvent = (e) => {
           toDoStore.dispatch(newTask(target.newTaskName.value));
           target.newTaskName.value = "";
         }
+
+        // debugger;
+        // e.target.newTaskName.focus();
+
+        document.getElementById("newTaskInput").focus();
       }
       if (target.name === "modalForm") {
         let err = validate({

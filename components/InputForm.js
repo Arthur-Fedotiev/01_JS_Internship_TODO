@@ -17,12 +17,14 @@ export default class InputForm {
     <input  type="text"
         class="my-0 form-control ${isError ? "alert alert-warning" : ""}"
         name="newTaskName"
-        placeholder="Add a new task"/>
+        id="newTaskInput"
+        placeholder="Add a new task"
         
-       ${isError ? ErrorMessage.render(err["newTaskName"]) : ""}
-        </div>
+        />
+   </div>
   <button type="button" id="createTaskBtn" class="btn btn-primary mb-2">+</button>
-       </form>
-      </div>`;
+ </form>
+ ${isError ? ErrorMessage.render(err["newTaskName"]) : ""}
+      `;
   }
 }
