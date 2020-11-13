@@ -44,3 +44,11 @@ export const handleInputFilter = (inputFilter) => ({
   type: CONSTANTS.INPUT_FILTER_TASKS,
   payload: inputFilter,
 });
+export const handleDateFilter = (dateFilter) => ({
+  type: CONSTANTS.DATE_FILTER_TASKS,
+  payload: dateFilter,
+});
+export const handleToggleSortingBlock = (showSortingBlock) => ({
+  type: CONSTANTS.TOGGLE_SORTING_BLOCK,
+  payload: showSortingBlock,
+});

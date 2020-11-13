@@ -25,7 +25,7 @@
 
 .fa-pencil-alt {
   position: absolute;
-  top: 15%;
+  top: 0;
   right: 0;
   cursor: pointer;
 }
@@ -33,6 +33,6 @@
   color: pink;
 }
 
-.dropdown-item {
-  cursor: pointer;
+input[name="deleteBtn"] {
+  display: inline;
 }

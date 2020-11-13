@@ -20,7 +20,14 @@ const createTask = (state, { payload }) => {
 
 const editTask = (state, { payload }) => {
   return state.tasks.map((task) =>
-    task.id === state.taskToEdit.id ? { ...task, ...payload } : task
+    task.id === state.taskToEdit.id
+      ? {
+          ...task,
+          ...payload,
+          creationDate: dateCreator(payload.creationDate).created,
+          expirationDate: dateCreator(payload.expirationDate).expired,
+        }
+      : task
   );
 };
 
@@ -83,8 +90,22 @@ export default (state, action) => {
       return { ...state, sortBy: payload };
 
     case CONSTANTS.INPUT_FILTER_TASKS:
-      console.log(payload);
-      return;
+      return {
+        ...state,
+        filterInput: payload,
+      };
+
+    case CONSTANTS.DATE_FILTER_TASKS:
+      return {
+        ...state,
+        dateFilter: payload,
+      };
+
+    case CONSTANTS.TOGGLE_SORTING_BLOCK:
+      return {
+        ...state,
+        showSortingBlock: !state.showSortingBlock,
+      };
     default:
       return state;
   }

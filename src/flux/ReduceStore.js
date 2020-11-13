@@ -1,5 +1,3 @@
-console.log("Reduce store is loaded");
-
 export class ReduceStore {
   constructor() {
     this._listeners = [];

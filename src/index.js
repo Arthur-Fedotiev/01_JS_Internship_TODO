@@ -1,8 +1,8 @@
-import tasks, { filters, dataFilters } from "./tasks.js";
+import tasks, { filters, dataFilters, dateCreator } from "./tasks.js";
 import { ReduceStore } from "./flux/ReduceStore.js";
 import ModalForm from "../components/ModalForm.js";
 import TasksList from "../components/TasksList.js";
-import ErrorMessage from "../components/ErrorMessage.js";
+import SortingElement from "../components/SortingElement.js";
 import InputForm from "../components/InputForm.js";
 import FilterButtonsList from "../components/FilterButtonsList.js";
 import taskReducer from "./taskReducer.js";
@@ -17,6 +17,8 @@ import {
   handleFilter,
   handleSorting,
   handleInputFilter,
+  handleToggleSortingBlock,
+  handleDateFilter,
 } from "./AC/index.js";
 import validate from "./utils/validate.js";
 
@@ -32,6 +34,8 @@ class ToDoStore extends ReduceStore {
       showTasks: "all",
       sortBy: "",
       filterInput: "",
+      showSortingBlock: false,
+      dateFilter: "",
     };
   }
   reduce = (state, action) => taskReducer(state, action);
@@ -82,6 +86,7 @@ const handleEvent = (e) => {
       break;
 
     case "click":
+      console.log(target.parentNode.id);
       if (target.id === CONSTANTS.CREATE_TASK_BTN)
         toDoStore.dispatch(handleModal(true));
       if (target.id === CONSTANTS.HIDE_MODAL_BTN) {
@@ -101,15 +106,26 @@ const handleEvent = (e) => {
           ? toDoStore.dispatch(handleDelete(null))
           : toDoStore.dispatch(handleFilter(target.dataset.filter));
       }
-      if (target.parentNode && target.parentNode.id === "sortingButtons") {
+      if (
+        target.parentNode &&
+        target.parentNode.id === "sortingBlock" &&
+        target.name !== "filterTasks"
+      ) {
         toDoStore.dispatch(handleSorting(target.dataset.sorting));
       }
+      if (
+        target.id === "toggleSortingBlock" ||
+        target.id === "sortAndFilterMenu"
+      )
+        toDoStore.dispatch(handleToggleSortingBlock());
       break;
+
     case "input":
-      console.log(target.value);
-      if (target.name === "task") toDoStore.dispatch(handleCheck(+target.id));
-      if (target.name === "filterTasks")
+      if (target.id === "filterTasks")
         toDoStore.dispatch(handleInputFilter(target.value));
+      if (target.name === "task") toDoStore.dispatch(handleCheck(+target.id));
+      if (target.id === "dateFilter")
+        toDoStore.dispatch(handleDateFilter(dateCreator(target.value).created));
       break;
     default:
       throw Error("No such a case");
@@ -118,6 +134,7 @@ const handleEvent = (e) => {
 document.addEventListener("submit", handleEvent);
 document.addEventListener("click", handleEvent);
 document.addEventListener("input", handleEvent);
+document.addEventListener("change", handleEvent);
 
 //----------------VIEWS
 const modalForm = new ModalForm(document.getElementById("modalWindow"));
@@ -128,6 +145,9 @@ const filterButtonsList = new FilterButtonsList(
   filters,
   dataFilters
 );
+const sortingElement = new SortingElement(
+  document.getElementById("sortingElement")
+);
 
 const render = ({
   tasks,
@@ -137,10 +157,13 @@ const render = ({
   showTasks,
   sortBy,
   filterInput,
+  showSortingBlock,
+  dateFilter,
 }) => {
-  filterButtonsList.render();
-  tasksList.render(tasks, showTasks, sortBy);
-  inputForm.render(err, sortBy, filterInput);
+  sortingElement.toggleSortingBlock(showSortingBlock);
+  filterButtonsList.render(filterInput);
+  tasksList.render(tasks, showTasks, sortBy, filterInput, dateFilter);
+  inputForm.render(err);
   modalForm.render(taskToEdit, err, showModal);
 };
 

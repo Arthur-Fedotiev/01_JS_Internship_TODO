@@ -1,16 +1,9 @@
 import ErrorMessage from "./ErrorMessage.js";
+import formatDate from "../src/utils/dateFormatter.js";
 
 export default class ModalForm {
   constructor(container) {
     this.container = container;
-  }
-
-  formatDate(invalidaDatesArray) {
-    const dates = invalidaDatesArray.map((d) => {
-      const date = d.slice(0, 10).split("/");
-      return [date.pop(), ...date].join("-");
-    });
-    return dates;
   }
 
   inputToHTML(task, dateValue, identifier) {
@@ -21,7 +14,7 @@ export default class ModalForm {
 
   render(task = {}, err, showModal) {
     const [created, expired] = task.id
-      ? this.formatDate([task.creationDate, task.expirationDate])
+      ? formatDate([task.creationDate, task.expirationDate])
       : "";
 
     const isError = !!err["newTaskModal"];
