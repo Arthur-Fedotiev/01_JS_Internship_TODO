@@ -3,17 +3,19 @@ import getId from "./utils/getId.js";
 export const dateCreator = (...args) => {
   const [creationDate, expirationDate] = args;
 
-  const created = creationDate
-    ? new Date(creationDate).toLocaleString()
-    : new Date().toLocaleString();
+  let created = creationDate ? new Date(creationDate) : new Date();
   let expired = expirationDate
     ? new Date(expirationDate).toLocaleString()
     : new Date(created);
-
+  console.log("create \n", created, "\n expired \n", expired);
   if (!expirationDate) {
+    console.log("line14");
+    console.log(created, expired);
     expired.setDate(expired.getDate() + 1);
     expired = expired.toLocaleString();
   }
+  created = created.toLocaleString();
+  console.log(created, expired);
   return { created, expired };
 };
 
