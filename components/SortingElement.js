@@ -8,6 +8,10 @@ export default class SortingElement {
     this.container.style.display = showSortingBlock ? "block" : "none";
   }
 
+  resetFilters(e) {
+    console.log(2);
+  }
+
   render() {
     this.container.innerHTML = `
     <div class="card text-center mb-5">
@@ -28,10 +32,9 @@ export default class SortingElement {
         id="dateFilter"
         class="form-control"
         name="dateFilter"
-        value=""
         autocomplete="off"
       />
-      
+     <span><i data-sorting="resetDateFilter" class="fas fa-times-circle"></i></span>
     <label for="dateFilter"></label><br />
     <a data-sorting="creationDate" class="btn btn-lg btn-primary">Date</a>
     <a data-sorting="content" class="btn btn-lg btn-primary">Text</a>

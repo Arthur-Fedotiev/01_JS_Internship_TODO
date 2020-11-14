@@ -32,7 +32,3 @@
 .fa-pencil-alt:hover {
   color: pink;
 }
-
-input[name="deleteBtn"] {
-  display: inline;
-}

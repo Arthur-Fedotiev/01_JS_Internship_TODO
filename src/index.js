@@ -42,7 +42,6 @@ class ToDoStore extends ReduceStore {
 }
 
 const toDoStore = new ToDoStore(); // STORE for TODO CREATED
-
 //------------ EVENT HANDLERS
 const handleEvent = (e) => {
   const { target, type } = e;
@@ -130,14 +129,23 @@ const handleEvent = (e) => {
         target.id === "sortAndFilterMenu"
       )
         toDoStore.dispatch(handleToggleSortingBlock());
+      if (target.dataset.sorting === "resetDateFilter") {
+        toDoStore.dispatch(handleDateFilter(""));
+        document.getElementById("dateFilter").value = "";
+      }
       break;
 
     case "input":
+      console.log(target.value);
       if (target.id === "filterTasks")
         toDoStore.dispatch(handleInputFilter(target.value));
       if (target.name === "task") toDoStore.dispatch(handleCheck(+target.id));
       if (target.id === "dateFilter")
         toDoStore.dispatch(handleDateFilter(dateCreator(target.value).created));
+      break;
+    case "keydown":
+      if (e.keyCode != 27) return;
+      toDoStore.dispatch(handleModal(false));
       break;
     default:
       throw Error("No such a case");
@@ -146,6 +154,7 @@ const handleEvent = (e) => {
 document.addEventListener("submit", handleEvent);
 document.addEventListener("click", handleEvent);
 document.addEventListener("input", handleEvent);
+document.addEventListener("keydown", handleEvent);
 
 //----------------VIEWS
 const modalForm = new ModalForm(document.getElementById("modalWindow"));
