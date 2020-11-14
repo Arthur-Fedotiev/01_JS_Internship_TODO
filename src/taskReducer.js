@@ -4,28 +4,35 @@ import getId from "./utils/getId.js";
 
 //----------HELPERS
 const createTask = (state, { payload }) => {
-  return [
-    ...state.tasks,
-    {
-      id: getId(),
-      content: payload.content ? payload.content : payload,
-      completed: false,
-      creationDate: payload.creationDate
-        ? dateCreator(payload.creationDate).created
-        : dateCreator().created,
-      expirationDate: dateCreator().expired,
-    },
-  ];
+  const isTaskFromModal = typeof payload === "object";
+  const { created, expired } = isTaskFromModal
+    ? dateCreator(payload.creationDate, payload.expirationDate)
+    : dateCreator();
+  const content = isTaskFromModal ? payload.content : payload;
+
+  const newTask = {
+    id: getId(),
+    content: content,
+    completed: false,
+    creationDate: created,
+    expirationDate: expired,
+  };
+  return [...state.tasks, newTask];
 };
 
 const editTask = (state, { payload }) => {
+  const { created, expired } = dateCreator(
+    payload.creationDate,
+    payload.expirationDate
+  );
+
   return state.tasks.map((task) =>
     task.id === state.taskToEdit.id
       ? {
           ...task,
           ...payload,
-          creationDate: dateCreator(payload.creationDate).created,
-          expirationDate: dateCreator(payload.expirationDate).expired,
+          creationDate: created,
+          expirationDate: expired,
         }
       : task
   );

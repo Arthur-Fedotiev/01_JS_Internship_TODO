@@ -20,7 +20,7 @@ import {
   handleToggleSortingBlock,
   handleDateFilter,
 } from "./AC/index.js";
-import validate from "./utils/validate.js";
+import validate, { validateExpirationDate } from "./utils/validate.js";
 
 //------------------ STORE (contains State of App)
 
@@ -62,10 +62,8 @@ const handleEvent = (e) => {
           toDoStore.dispatch(newTask(target.newTaskName.value));
           target.newTaskName.value = "";
         }
-
         // debugger;
         // e.target.newTaskName.focus();
-
         document.getElementById("newTaskInput").focus();
       }
       if (target.name === "modalForm") {
@@ -73,7 +71,16 @@ const handleEvent = (e) => {
           name: "newTaskModal",
           value: target.newTaskModal.value,
         });
+
+        console.log(target.creationDateModal.value);
+        console.log(target.expirationDateModal.value);
+
         toDoStore.dispatch(handleError(err));
+
+        const validatedExpirationDate = validateExpirationDate(
+          target.creationDateModal.value,
+          target.expirationDateModal.value
+        );
 
         if (!err["newTaskModal"]) {
           toDoStore.dispatch(handleError({}));
@@ -81,7 +88,7 @@ const handleEvent = (e) => {
             newTask({
               content: target.newTaskModal.value,
               creationDate: target.creationDateModal.value,
-              expirationDate: target.expirationDateModal.value,
+              expirationDate: validatedExpirationDate,
             })
           );
           toDoStore.dispatch(handleModal(false));
@@ -139,7 +146,6 @@ const handleEvent = (e) => {
 document.addEventListener("submit", handleEvent);
 document.addEventListener("click", handleEvent);
 document.addEventListener("input", handleEvent);
-document.addEventListener("change", handleEvent);
 
 //----------------VIEWS
 const modalForm = new ModalForm(document.getElementById("modalWindow"));
