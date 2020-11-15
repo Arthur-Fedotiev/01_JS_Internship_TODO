@@ -12,4 +12,6 @@ export default {
   CREATE_TASK_BTN: "createTaskBtn",
   HIDE_MODAL_BTN: "hideModalBtn",
   TOGGLE_SORTING_BLOCK: "TOGGLE_SORTING_BLOCK",
+  FILTERS: ["ALL", "ACTIVE", "COMPLETED", "CLEAR COMPLETED"],
+  DATA_FILTERS: ["all", "active", "completed", "clearCompleted"],
 };

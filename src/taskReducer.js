@@ -1,5 +1,6 @@
 import CONSTANTS from "./constants.js";
-import { dateCreator } from "./tasks.js";
+import { dateCreator } from "./utils/dateFormatter.js";
+
 import getId from "./utils/getId.js";
 
 //----------HELPERS

@@ -8,10 +8,6 @@ export default class SortingElement {
     this.container.style.display = showSortingBlock ? "block" : "none";
   }
 
-  resetFilters(e) {
-    console.log(2);
-  }
-
   render() {
     this.container.innerHTML = `
     <div class="card text-center mb-5">

@@ -1,5 +1,5 @@
 import { dateSorter, stringSorter } from "../src/utils/sorter.js";
-import dateSeparator from "../src/utils/dateSeparator.js";
+import { dateSeparator } from "../src/utils/dateFormatter.js";
 
 export default class TasksList {
   constructor(container) {
@@ -85,7 +85,8 @@ export default class TasksList {
   }
 
   textFilter(textFilter) {
-    return (task) => task.content.toLowerCase().includes(textFilter);
+    return (task) =>
+      task.content.toLowerCase().includes(textFilter.toLowerCase());
   }
 
   dateFilter(dateFilter) {

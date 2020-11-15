@@ -1,23 +1,29 @@
 import ErrorMessage from "./ErrorMessage.js";
-import formatDate from "../src/utils/dateFormatter.js";
+import { dateToHTMLFormatter } from "../src/utils/dateFormatter.js";
 
 export default class ModalForm {
   constructor(container) {
     this.container = container;
   }
 
-  inputToHTML(task, dateValue, identifier) {
-    return `<input ${
-      task.id && `value=${dateValue}`
-    } type="date" id=${identifier} name=${identifier} required/>`;
+  inputToHTML(task, dateValue, identifier, isDateError) {
+    const dateFromStorage = localStorage.invalidTask
+      ? JSON.parse(localStorage.getItem("invalidTask"))[identifier]
+      : "";
+    return `<input  
+    ${dateFromStorage && `value=${dateFromStorage}`}
+    ${task.id && `value=${dateValue}`}
+    type="date" id=${identifier} name=${identifier} required
+    class="${isDateError ? "alert alert-warning" : ""}"
+    />`;
   }
 
   render(task = {}, err, showModal) {
-    const [created, expired] = task.id
-      ? formatDate([task.creationDate, task.expirationDate])
-      : "";
+    const created = task.id ? dateToHTMLFormatter(task.creationDate) : "";
+    const expired = task.id ? dateToHTMLFormatter(task.expirationDate) : "";
 
-    const isError = !!err["newTaskModal"];
+    const isContentError = !!err["newTaskModal"];
+    const isDateError = !!err["expirationDateModal"];
 
     this.container.innerHTML = `<div class="modal-content">
           <form name="modalForm">
@@ -25,11 +31,17 @@ export default class ModalForm {
             <input type="text" 
             id="newTaskModal"
             name="newTaskModal"
+            ${
+              localStorage.invalidTask &&
+              `value="${
+                JSON.parse(localStorage.getItem("invalidTask")).content
+              }"`
+            }
             ${task.id && `value="${task.content}"`}
-            class="${isError ? "alert alert-warning" : ""}"  
+            class="${isContentError ? "alert alert-warning" : ""}"  
             placeholder="Add a new task"/><br /><br />
 
-            ${isError ? ErrorMessage.render(err["newTaskModal"]) : ""}
+            ${isContentError ? ErrorMessage.render(err["newTaskModal"]) : ""}
             
             <label for="creationDateModal">Creation date of the task</label><br />
             ${this.inputToHTML(task, created, "creationDateModal")}<br /><br />
@@ -38,9 +50,12 @@ export default class ModalForm {
             ${this.inputToHTML(
               task,
               expired,
-              "expirationDateModal"
+              "expirationDateModal",
+              isDateError
             )}<br /><br /> 
-             
+            ${
+              isDateError ? ErrorMessage.render(err["expirationDateModal"]) : ""
+            }
             <button type="submit" id="submitModalBtn" class="btn btn-primary mb-2">Save</button>
             <button type="button" id="hideModalBtn" class="btn btn-primary mb-2">Cancel</button>
           </form>

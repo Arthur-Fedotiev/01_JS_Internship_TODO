@@ -1,22 +1,5 @@
 import getId from "./utils/getId.js";
-
-export const dateCreator = (...args) => {
-  const [creationDate, expirationDate] = args;
-
-  let created = creationDate ? new Date(creationDate) : new Date();
-  let expired = expirationDate
-    ? new Date(expirationDate).toLocaleString()
-    : new Date(created);
-  if (!expirationDate) {
-    expired.setDate(expired.getDate() + 1);
-    expired = expired.toLocaleString();
-  }
-  created = created.toLocaleString();
-  return { created, expired };
-};
-
-export const filters = ["ALL", "ACTIVE", "COMPLETED", "CLEAR COMPLETED"];
-export const dataFilters = ["all", "active", "completed", "clearCompleted"];
+import { dateCreator } from "./utils/dateFormatter.js";
 
 const tasks = [
   {

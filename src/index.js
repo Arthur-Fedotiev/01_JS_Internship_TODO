@@ -1,4 +1,4 @@
-import tasks, { filters, dataFilters, dateCreator } from "./tasks.js";
+import tasks from "./tasks.js";
 import { ReduceStore } from "./flux/ReduceStore.js";
 import ModalForm from "../components/ModalForm.js";
 import TasksList from "../components/TasksList.js";
@@ -21,6 +21,7 @@ import {
   handleDateFilter,
 } from "./AC/index.js";
 import validate, { validateExpirationDate } from "./utils/validate.js";
+import { dateCreator } from "./utils/dateFormatter.js";
 
 //------------------ STORE (contains State of App)
 
@@ -57,6 +58,7 @@ const handleEvent = (e) => {
         toDoStore.dispatch(handleError(err));
 
         if (!err["newTaskName"]) {
+          localStorage.removeItem("invalidTask");
           toDoStore.dispatch(handleError({}));
           toDoStore.dispatch(newTask(target.newTaskName.value));
           target.newTaskName.value = "";
@@ -65,29 +67,44 @@ const handleEvent = (e) => {
         // e.target.newTaskName.focus();
         document.getElementById("newTaskInput").focus();
       }
+
+      //--------------------- SUBMIT FROM MODAL FORM ------------------
       if (target.name === "modalForm") {
         let err = validate({
           name: "newTaskModal",
           value: target.newTaskModal.value,
         });
 
-        console.log(target.creationDateModal.value);
-        console.log(target.expirationDateModal.value);
-
-        toDoStore.dispatch(handleError(err));
-
-        const validatedExpirationDate = validateExpirationDate(
+        const isExpirationDateValid = validateExpirationDate(
           target.creationDateModal.value,
           target.expirationDateModal.value
         );
 
-        if (!err["newTaskModal"]) {
+        if (!isExpirationDateValid)
+          err.expirationDateModal =
+            "Expiration date cannot be earlier than creation date";
+
+        if (err) {
+          console.log(err);
+          const invalidTask = {
+            content: target.newTaskModal.value,
+            creationDateModal: target.creationDateModal.value,
+            expirationDateModal: target.expirationDateModal.value,
+          };
+          localStorage.setItem("invalidTask", JSON.stringify(invalidTask));
+        }
+
+        toDoStore.dispatch(handleError(err));
+
+        if (!err["newTaskModal"] && !err["expirationDateModal"]) {
+          console.log(target.creationDateModal.value);
+          localStorage.removeItem("invalidTask");
           toDoStore.dispatch(handleError({}));
           toDoStore.dispatch(
             newTask({
               content: target.newTaskModal.value,
               creationDate: target.creationDateModal.value,
-              expirationDate: validatedExpirationDate,
+              expirationDate: target.expirationDateModal.value,
             })
           );
           toDoStore.dispatch(handleModal(false));
@@ -97,10 +114,10 @@ const handleEvent = (e) => {
       break;
 
     case "click":
-      console.log(target.parentNode.id);
       if (target.id === CONSTANTS.CREATE_TASK_BTN)
         toDoStore.dispatch(handleModal(true));
       if (target.id === CONSTANTS.HIDE_MODAL_BTN) {
+        localStorage.removeItem("invalidTask");
         toDoStore.dispatch(handleError({}));
         toDoStore.dispatch(handleModal(false));
         toDoStore.dispatch(handleEdit(null));
@@ -136,7 +153,6 @@ const handleEvent = (e) => {
       break;
 
     case "input":
-      console.log(target.value);
       if (target.id === "filterTasks")
         toDoStore.dispatch(handleInputFilter(target.value));
       if (target.name === "task") toDoStore.dispatch(handleCheck(+target.id));
@@ -144,7 +160,8 @@ const handleEvent = (e) => {
         toDoStore.dispatch(handleDateFilter(dateCreator(target.value).created));
       break;
     case "keydown":
-      if (e.keyCode != 27) return;
+      if (e.keyCode !== 27) return;
+      localStorage.removeItem("invalidTask");
       toDoStore.dispatch(handleModal(false));
       break;
     default:
@@ -162,8 +179,8 @@ const tasksList = new TasksList(document.getElementById("tasks"));
 const inputForm = new InputForm(document.getElementById("inputForm"));
 const filterButtonsList = new FilterButtonsList(
   document.getElementById("filters"),
-  filters,
-  dataFilters
+  CONSTANTS.FILTERS,
+  CONSTANTS.DATA_FILTERS
 );
 const sortingElement = new SortingElement(
   document.getElementById("sortingElement")

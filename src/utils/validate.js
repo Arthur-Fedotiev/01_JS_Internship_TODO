@@ -10,6 +10,4 @@ export default (data) => {
 };
 
 export const validateExpirationDate = (created, expired) =>
-  Date.parse(expired) - Date.parse(created) < 0
-    ? Date.parse(created) + 1000 * 60 * 60 * 24
-    : expired;
+  Date.parse(created) - Date.parse(expired) <= 0;
