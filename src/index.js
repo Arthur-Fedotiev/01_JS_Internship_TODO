@@ -85,7 +85,6 @@ const handleEvent = (e) => {
             "Expiration date cannot be earlier than creation date";
 
         if (err) {
-          console.log(err);
           const invalidTask = {
             content: target.newTaskModal.value,
             creationDateModal: target.creationDateModal.value,
@@ -97,7 +96,6 @@ const handleEvent = (e) => {
         toDoStore.dispatch(handleError(err));
 
         if (!err["newTaskModal"] && !err["expirationDateModal"]) {
-          console.log(target.creationDateModal.value);
           localStorage.removeItem("invalidTask");
           toDoStore.dispatch(handleError({}));
           toDoStore.dispatch(
@@ -172,6 +170,9 @@ document.addEventListener("submit", handleEvent);
 document.addEventListener("click", handleEvent);
 document.addEventListener("input", handleEvent);
 document.addEventListener("keydown", handleEvent);
+window.addEventListener("load", function (e) {
+  localStorage.removeItem("invalidTask");
+});
 
 //----------------VIEWS
 const modalForm = new ModalForm(document.getElementById("modalWindow"));

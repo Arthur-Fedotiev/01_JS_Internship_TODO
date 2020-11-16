@@ -1,11 +1,23 @@
+const fromRusLocale = (dateString) => {
+  const dateArray = dateString.split(".");
+  const item = dateArray.shift();
+  dateArray.splice(1, 0, item);
+  return dateArray.join("/");
+};
+
 export const dateSeparator = (date) => {
   const index = date.indexOf(",");
-  return date.substring(0, index);
+  const dateString = date.substring(0, index);
+  return dateString;
 };
 
 export const dateToHTMLFormatter = (fullDateString) => {
-  const dateFromString = new Date(dateSeparator(fullDateString));
+  const separatedDate = dateSeparator(fullDateString);
+  const isRusLocale = separatedDate.includes(".");
 
+  const dateFromString = isRusLocale
+    ? new Date(fromRusLocale(separatedDate))
+    : new Date(separatedDate);
   const formattedDateString =
     dateFromString.getFullYear() +
     "-" +
